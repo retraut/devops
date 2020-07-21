@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  cron:
+    image: nux-image
+    restart: always
+    container_name: nux-container
+    volumes:
+    environment:
+      VIRTUAL_PROTO: http
+      VIRTUAL_HOST: nuxt.example.com
+      VIRTUAL_PORT: 80
+    network_mode: bridge
+

@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  main:
+    image: mikewhy/docker-gen-letsencrypt
+    container_name: proxy-docker-gen
+    restart: always
+    environment:
+      - LETSENCRYPT_EMAIL=retaut@gmail.com
+      - NGINX_CONTAINER=proxy-nginx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./persistent/conf.d:/etc/nginx/conf.d
+      - ./persistent/vhost.d:/etc/nginx/vhost.d
+      - ./persistent/certs:/etc/nginx/certs
+      - ./persistent/htpasswd:/etc/nginx/htpasswd
+      - ./persistent/html:/usr/share/nginx/html
+
+  nginx:
+    image: nginx:latest
+    container_name: proxy-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./persistent/logs:/var/log/nginx
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./persistent/conf.d:/etc/nginx/conf.d
+      - ./persistent/vhost.d:/etc/nginx/vhost.d
+      - ./persistent/certs:/etc/nginx/certs
+      - ./persistent/htpasswd:/etc/nginx/htpasswd
+      - ./persistent/html:/usr/share/nginx/html
+    network_mode: bridge
